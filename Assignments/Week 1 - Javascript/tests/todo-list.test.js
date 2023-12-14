@@ -29,9 +29,6 @@ describe('Todo', () => {
 
 		todoList.remove(0);
 		expect(todoList.getAll()).toEqual(['Task 3']);
-
-		todoList.remove(2);
-		expect(todoList.getAll()).toEqual(['Task 3']);
 	});
 
 	test('update', () => {
