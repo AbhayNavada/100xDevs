@@ -12,16 +12,36 @@ const app = express();
 // clears every one second
 
 let numberOfRequestsForUser = {};
+
 setInterval(() => {
     numberOfRequestsForUser = {};
 }, 1000)
 
+function rateLimitter(req, res, next) {
+	const userId = req.headers["user-id"];
+
+	if (!numberOfRequestsForUser[userId]) {
+		numberOfRequestsForUser[userId] = 1;
+	} else {
+		if (numberOfRequestsForUser[userId] > 5) {
+			return res.status(404).json({
+				msg: "Resource not avaliable"
+			});
+		}
+		numberOfRequestsForUser[userId] += 1;
+	}
+
+	next();
+}
+
+app.use(rateLimitter);
+
 app.get('/user', function(req, res) {
-  res.status(200).json({ name: 'john' });
+  	res.status(200).json({ name: 'john' });
 });
 
 app.post('/user', function(req, res) {
-  res.status(200).json({ msg: 'created dummy user' });
+	res.status(200).json({ msg: 'created dummy user' });
 });
 
 module.exports = app;
